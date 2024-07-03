@@ -1,17 +1,15 @@
 FROM golang:1.21-alpine as builder
 
-WORKDIR /usr/src/app
+WORKDIR /go/src/app
 
-COPY . .
+COPY main.go .
 
-RUN go mod download && go mod verify
 RUN go build main.go
-
-#RUN go build -v -o /usr/local/bin/app ./...
 
 FROM scratch
 
-COPY main.go . 
+WORKDIR /app
 
-#CMD ["/usr/local/bin/app"]
-CMD ["./main.go"]
+COPY --from=builder /go/src/app /app
+
+CMD ["./main"]
